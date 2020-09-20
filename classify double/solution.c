@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
-
 /**
  * Library-level functions.
  * You should use them in the main sections.
@@ -15,16 +13,44 @@ uint64_t convertToUint64 (double number) {
 }
 
 bool getBit (const uint64_t number, const uint8_t index) {
-    /// Your code here...
+    uint64_t mask = 1;
+    mask <<= index;
+    uint64_t temp = mask & number;
+    temp >>= index;
+    return temp;
 }
 
+bool checkForMinus(uint64_t number) {
+    return getBit(number,63) == 1;
+}
 
-/**
- * Checkers here:
- */
+bool checkForNormal (uint64_t number) {
+    uint8_t count_zeros = 0;
+    uint8_t count_ones = 0;
+    for (uint8_t i = 0; i < 11; ++ i) {
+        if (getBit(number, 62 - i)  ) {
+            count_ones += 1;
+        }else {
+            count_zeros += 1;
+        }
+    }
+    if (count_ones == 11 || count_zeros == 11) {
+        return false;
+    }
+    return true;
+}
+
+bool checkForZeros(uint64_t number) {
+    for (uint8_t i = 0; i < 11; ++ i) {
+        if (getBit(number, 62 - i)) {
+            return false;
+        }
+    }
+    return true;
+}
 
 bool checkForPlusZero (uint64_t number) {
-    /// Your code here.
+    return number == 0x0000000000000000;
 }
 
 bool checkForMinusZero (uint64_t number) {
@@ -32,37 +58,49 @@ bool checkForMinusZero (uint64_t number) {
 }
 
 bool checkForPlusInf (uint64_t number) {
-    /// Your code here.
+    return number == 0x7FF0000000000000;
 }
 
 bool checkForMinusInf (uint64_t number) {
-    /// Your code here.
+    return number == 0xFFF0000000000000;
 }
 
 bool checkForPlusNormal (uint64_t number) {
-    /// Your code here.
+    return (!checkForMinus(number) && checkForNormal(number));
 }
 
 bool checkForMinusNormal (uint64_t number) {
-    /// Your code here.
+    return (checkForMinus(number) && checkForNormal(number));
 }
 
 bool checkForPlusDenormal (uint64_t number) {
-    /// Your code here.
+    return (!checkForMinus(number) && checkForZeros(number));
 }
 
 bool checkForMinusDenormal (uint64_t number) {
-    /// Your code here.
+    return (checkForMinus(number) && checkForZeros(number));
 }
 
 bool checkForSignalingNan (uint64_t number) {
-    /// Your code here.
+    if (getBit(number,51)){
+        return false;
+    }
+    for (uint8_t i = 0; i < 11; ++ i) {
+        if (!getBit(number, 62 - i)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool checkForQuietNan (uint64_t number) {
-    /// Your code here.
+    for (uint8_t i = 0; i < 12; ++ i) {
+        if (!getBit(number, 62 - i)) {
+            return false;
+        }
+    }
+    return true;
 }
-
 
 void classify (double number) {
     if (checkForPlusZero(convertToUint64(number))) {
