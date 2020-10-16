@@ -6,17 +6,17 @@
 
 namespace task {
 std::vector<double> operator+(const std::vector<double> &a, const std::vector<double> &b) {
-  std::vector<double> c;
+  std::vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] + b[i]);
+    c[i] = a[i] + b[i];
   }
   return c;
 }
 
 std::vector<double> operator-(const std::vector<double> &a, const std::vector<double> &b) {
-  std::vector<double> c;
+  std::vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] - b[i]);
+    c[i] = a[i] - b[i];
   }
   return c;
 }
@@ -26,9 +26,9 @@ std::vector<double> operator+(const std::vector<double> &a) {
 }
 
 std::vector<double> operator-(const std::vector<double> &a) {
-  std::vector<double> c;
+  std::vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(-a[i]);
+    c[i] = -a[i];
   }
   return c;
 }
@@ -42,10 +42,10 @@ double operator*(const std::vector<double> &a, const std::vector<double> &b) {
 }
 
 std::vector<double> operator%(const std::vector<double> &a, const std::vector<double> &b) {
-  std::vector<double> c;
-  c.push_back(a[1] * b[2] - a[2] * b[1]);
-  c.push_back(a[2] * b[0] - a[0] * b[2]);
-  c.push_back(a[0] * b[1] - a[1] * b[0]);
+  std::vector<double> c(3);
+  c[0] = a[1] * b[2] - a[2] * b[1];
+  c[1] = a[2] * b[0] - a[0] * b[2];
+  c[2] = a[0] * b[1] - a[1] * b[0];
   return c;
 }
 
@@ -105,25 +105,23 @@ void reverse(std::vector<double> &a) {
   int n = a.size();
   if ((n != 0) && (n != 1)) {
     for (ssize_t i = 0; i < n / 2; ++i) {
-      double tmp = a[i];
-      a[i] = a[n - i - 1];
-      a[n - i - 1] = tmp;
+      std::swap(a[i], a[n - i - 1]);
     }
   }
 }
 
 std::vector<int> operator|(const std::vector<int> &a, const std::vector<int> &b) {
-  std::vector<int> c;
+  std::vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] | b[i]);
+    c[i] = a[i] | b[i];
   }
   return c;
 }
 
 std::vector<int> operator&(const std::vector<int> &a, const std::vector<int> &b) {
-  std::vector<int> c;
+  std::vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] & b[i]);
+    c[i] = a[i] & b[i];
   }
   return c;
 }
@@ -132,10 +130,11 @@ std::istream &operator>>(std::istream &str, std::vector<double> &a) {
   int n;
   str >> n;
   a.clear();
+  a = std::vector<double>(n);
   for (size_t i = 0; i < n; ++i) {
     double tmp;
     str >> tmp;
-    a.push_back(tmp);
+    a[i] = tmp;
   }
   return str;
 }
